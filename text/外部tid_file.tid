@@ -1,0 +1,101 @@
+check1: 外部サイトを開く
+created: 20220304101847553
+creator: Takoyaki Umaaaaaa
+modified: 20220309132641127
+modifier: Takoyaki Umaaaaaa
+tags: TiddlyWiki_解説 memo
+title: 外部tid file
+
+\define refertofield(param) !!$param$
+
+\define clearBtn(fieldname)
+<$reveal state=<<refertofield $fieldname$>> type="nomatch" text="">
+<$button class="tc-btn-invisible">
+<$action-deletefield $field=$fieldname$ />
+{{$:/core/images/close-button}}
+</$button>
+</$reveal>
+\end
+
+
+!! 条件分岐の書き方
+
+書き方は複数あるが、どれも面倒なものばかり；´Д｀)
+
+!!! 基本
+
+* ◯◯だったら
+
+
+!!! setで
+
+!!! listで
+
+<div style="border: solid 1px">
+
+
+RGBA(119, 162, 187, 1)    77A2BB    tt-color-ao
+RGBA(215, 161, 36, 1)    D7A124    tt-color-mikan
+RGBA(226, 131, 148, 1)    E28394    tt-color-aka
+RGBA(112, 48, 160. 1)     7030A0  tt-color-mura
+
+<$let editbox="string <code> aaabbb </code> cccdddd" variable="" >
+
+```
+<i data-handtooltip=<<editbox>> class="handtooltip handtooltipbase-ao"></i>
+<i data-handtooltip=<<editbox>> class="handtooltip handtooltipbase-aka"></i>
+<i data-handtooltip=<<editbox>> class="handtooltip handtooltipbase-mikan"></i>
+<i data-handtooltip=<<editbox>> class="handtooltip handtooltipbase-mura"></i>
+```
+
+
+
+<i data-handtooltip=<<editbox>> class="handtooltip handtooltipbase-ao">&#x3c;$edit-text  field="inputtext1" placeholder="URLを入力"/&#x3e;  </i><i data-handtooltip=<<clearbtn>> class="handtooltip handtooltipbase-ao"> &#x3c;&#x3c;clearBtn "inputtext1"&#x3e;&#x3e; </i><br>
+<i data-handtooltip=<<editbox>> class="handtooltip handtooltipbase-mikan">&#x3c;$set name=<span style='color:#E28394;'>targetURL </span>  value=&#x7b;&#x7b;&#x7b; &#x5b;title&#x3c;currentTiddler&#x3e;get&#x5b;inputtext1&#x5d;&#x5d; &#x7d;&#x7d;&#x7d; &#x3e;</i>
+
+<span style='color:#77A2BB;'>&#x3c;$button&#x3e;</span>&#x7b;&#x7b;!!check1&#x7d;&#x7d;ボタン<br>
+&emsp;<span style='color:#77A2BB;'>&#x3c;$list</span>&nbsp;
+<span style='color:#D7A124;'>filter=</span><span style='color:#E28394;'>&quot;&#x5b;title&#x3c;currentTiddler&#x3e;field:check1&#x5b;</span>
+<span style='color:#E28394;'>外部サイトを開く
+&#x5d;&#x5d;&quot;</span><span style='color:#77A2BB;'>&#x3e;</span><br>
+<br>
+&emsp;&emsp;&#x3c;<span style='color:#77A2BB;'>$action-sendmessage</span>&nbsp;<span style='color:#D7A124;'>$message=</span><span style='color:#7030A0'>&quot;tm-open-external-window&quot;</span><br>
+&emsp;&emsp;&emsp;<span style='color:#D7A124;'>$param=</span><span style='color:#E28394;'>&quot;<$text text="https://developer.mozilla.org/en-US/docs/Web/API/Window/open"/>&quot;</span><br>
+&emsp;&emsp;&emsp;<span style='color:#D7A124;'>windowName=</span><span style='color:#E28394;'>&quot;_tiddlywiki&quot;</span>
+<span style='color:#D7A124;'>windowFeatures=</span><span style='color:#E28394;'>&quot;height=400, width=600&quot;/&#x3e;</span><br>
+<br>
+&emsp;&#x3c;<span style='color:#77A2BB;'>/$list</span>&#x3e;<br>
+&#x3c;<span style='color:#77A2BB;'>/$button</span>&#x3e;<br>
+&#x3c;<span style='color:#77A2BB;'>$checkbox</span>&nbsp;<span style='color:#D7A124;'>tiddler=</span>&#x7b;&#x7b;!!title&#x7d;&#x7d;
+<span style='color:#D7A124;'>field=</span><span style='color:#E28394;'>&quot;check1&quot;</span><br>
+&emsp;<span style='color:#D7A124;'>checked=</span><span style='color:#E28394;'>&quot;外部サイトを開く&quot;</span>
+<span style='color:#D7A124;'>unchecked=</span><span style='color:#E28394;'>&quot;何もしない&quot;</span>&#x3e;<br>
+&emsp;&emsp;&#x7b;&#x7b;!!check1&#x7d;&#x7d;
+<span style='color:#77A2BB;'>&#x3c;/$checkbox&#x3e;</span>
+
+
+</$let>
+</div>
+
+
+<$edit-text field="inputtext1" placeholder="URLを入力"/><<clearBtn "inputtext1">><br>
+<$set name=targetURL value={{{ [title<currentTiddler>get[inputtext1]] }}} >
+
+<$button>{{!!check1}}ボタン
+<$list filter="[title<currentTiddler>field:check1[外部サイトを開く]]">
+
+<$action-sendmessage $message="tm-open-external-window" $param=<<targetURL>> 
+   windowName="外部のサイト" windowFeatures="height=400, width=600"/>
+
+</$list>
+</$button>
+
+</$set>
+ <$checkbox  tiddler={{!!title}}  field="check1"  checked="外部サイトを開く" 
+ unchecked="何もしない">
+        設定切り替え
+</$checkbox> 
+
+
+
+!!! filter式のelseで
