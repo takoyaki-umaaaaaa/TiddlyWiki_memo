@@ -1,0 +1,9 @@
+@font-face {
+	font-family: '花鳥風月P';
+	src: url('https://cdn.leafscape.be/kacho/kachoP_web.woff2') format("woff2");
+}
+
+@font-face {
+	font-family: '花鳥風月PB';
+	src: url('https://cdn.leafscape.be/kacho/kachoPB_web.woff2') format("woff2");
+}
