@@ -15,12 +15,3 @@
        url('./fonts/crimson-pro-v21-latin-200italic.woff2') format('woff2'), 
        url('./fonts/crimson-pro-v21-latin-200italic.woff') format('woff');
 }
-
-@font-face {
-  font-family: 'Crimson Pro';
-  font-style: normal;
-  font-weight: 200;
-  src: local(''),
-       url('./fonts/crimson-pro-v21-latin-200.woff2') format('woff2'), 
-       url('./fonts/crimson-pro-v21-latin-200.woff') format('woff');
-}
