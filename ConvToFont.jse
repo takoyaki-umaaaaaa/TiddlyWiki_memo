@@ -1,0 +1,144 @@
+﻿// *************************************************************************
+// 英字フォント変換マクロ
+// 選択範囲の英字を指定したフォントに変換
+//
+// ※注意1	『ASCII英字 ➫ 修飾英字』の変換のみ。逆はできない。
+// ※注意2	「Double Struck capital」は大文字の "CHNPQRZ" を変換できない。
+//			Wordやメモ帳に貼りつけると出るが……
+// ※注意3	メニューを出したままでいると「マクロ実行中…」のDialogが表示される。
+//			これはsakura editorのマクロ無限ループ対策によるもの。
+//			[キャンセル]押下かメニュー選択で消去が可能。
+//
+//	2022/07/31	Ver.1.0.3	囲み文字を追加
+//	2022/07/30	Ver.1.0.2	構造体追加のみで変換の種類を増やせるように構造修正
+//	2022/07/29	Ver.1.0.1	Bold sans-serif追加
+//	2022/07/19	Ver.1.0.0
+// *************************************************************************
+
+
+try {
+	// 1. 𝐁𝐨𝐥𝐝 𝐒𝐞𝐫𝐢𝐟
+	var bSerif = {};
+	bSerif.fontname = new String('𝐁𝐨𝐥𝐝 𝐒𝐞𝐫𝐢𝐟');
+	bSerif.AZ  = [0xd835, 0xdc00 - 0x41];
+	bSerif.az  = [0xd835, 0xdc1a - 0x61];
+	bSerif.n09 = [0xd835, 0xdfce - 0x30];
+	bSerif.SP  = null;
+	// 2. 𝗕𝗼𝗹𝗱 𝗦𝗮𝗻𝘀-𝘀𝗲𝗿𝗶𝗳
+	var bSansserif = {};
+	bSansserif.fontname = new String('𝗕𝗼𝗹𝗱 𝗦𝗮𝗻𝘀-𝘀𝗲𝗿𝗶𝗳');
+	bSansserif.AZ  = [0xd835, 0xddd4 - 0x41];
+	bSansserif.az  = [0xd835, 0xddee - 0x61];
+	bSansserif.n09 = [0xd835, 0xdfec - 0x30];
+	bSansserif.SP  = null;
+	// 3. 𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗
+	var bFraktur = {};
+	bFraktur.fontname = new String('𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗');
+	bFraktur.AZ  = [0xd835, 0xdd6c - 0x41];
+	bFraktur.az  = [0xd835, 0xdd86 - 0x61];
+	bFraktur.n09 = null;	// 割り当て無し
+	bFraktur.SP  = null;
+	// 4. 𝔻𝕠𝕦𝕓𝕝𝕖 𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒𝕝	※注意：大文字の CHNPQRZ はサクラエディタでは表示できません
+	var dStruckCapital = {};
+	dStruckCapital.fontname = new String('𝔻𝕠𝕦𝕓𝕝𝕖 𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒');
+	dStruckCapital.AZ  = [0xd835, 0xdd38 - 0x41];
+	dStruckCapital.az  = [0xd835, 0xdd52 - 0x61];
+	dStruckCapital.n09 = [0xd835, 0xdfd8 - 0x30];
+	dStruckCapital.SP  = { C: 0x2102, H: 0x210D, N: 0x2115, P: 0x2119, Q: 0x211A, R: 0x211D, Z: 0x2124 };
+	// 5. 𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽
+	var bScript = {};
+	bScript.fontname = new String('𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽');
+	bScript.AZ  = [0xd835, 0xdcd0 - 0x41];
+	bScript.az  = [0xd835, 0xdcea - 0x61];
+	bScript.n09 = null;
+	bScript.SP  = null;
+	// 🆂🆀🆄🅰🆁🅴 🅱🅾🆇
+	var squareBoxB = {};
+	squareBoxB.fontname = new String('🆂🆀🆄🅰🆁🅴 🅱🅾🆇');
+	squareBoxB.AZ  = [0xd83c, 0xdd70 - 0x41];
+	squareBoxB.az  = [0xd83c, 0xdd70 - 0x61];	// 大文字のみ
+	squareBoxB.n09 = null;
+	squareBoxB.SP  = null;
+	// 🅂🅀🅄🄰🅁🄴 🄱🄾🅇
+	var squareBoxW = {};
+	squareBoxW.fontname = new String('🅂🅀🅄🄰🅁🄴 🄱🄾🅇');
+	squareBoxW.AZ  = [0xd83c, 0xdd30 - 0x41];
+	squareBoxW.az  = [0xd83c, 0xdd30 - 0x61];
+	squareBoxW.n09 = null;
+	squareBoxW.SP  = null;
+	// 🅒🅔🅡🅒🅛🅔
+	var cercleB = {};
+	cercleB.fontname = new String('🅒🅔🅡🅒🅛🅔');
+	cercleB.AZ  = [0xd83c, 0xdd50 - 0x41];
+	cercleB.az  = [0xd83c, 0xdd50 - 0x61];
+	cercleB.n09 = [0x0000, 0x2789 - 0x30];
+	cercleB.SP  = {0: 0x24ff};
+
+
+	var dummy = null;
+	var fontarr = new Array(dummy, bSerif, bSansserif, bFraktur, dStruckCapital, bScript, squareBoxB, squareBoxW, cercleB);
+
+	// Font選択メニュー
+	var menustr = "";
+	for(var i=1; i < fontarr.length; i++){
+		menustr += fontarr[i].fontname + ",";	// 最後の","はサクラエディタがいい感じにエラー処理すると信じて
+	}
+
+	// 変換対象を選択済みかチェック
+	var selectedStr = Editor.GetSelectedString(0);
+	if( selectedStr < 1 ){
+		var e = new Error(0, "変換したい文字を選択後に\r\nマクロを呼び出してください。");
+		throw e;
+	}
+
+	var selectedType = null;
+	// カーソル付近にメニューを表示し、変換先Fontを選択
+	var disppos = 1;									// Menuの表示位置。0:mouse位置に表示, 1:cursor位置に表示
+	var item = Editor.CreateMenu( disppos, menustr );	// 戻り値は1始まり。0はキャンセル
+	selectedType = fontarr[item];						// Javascriptは領域外アクセスすると undefinedが返される。catchできない。
+
+	// 変換実行
+	if( selectedType != null ){
+		var str = convToNewFont( selectedStr, selectedType );
+		Editor.InsText( str );
+	}
+}// --- メイン処理終了 ---
+catch( e ){
+	Editor.InfoMsg( e.description );
+}
+
+
+
+// 変換関数
+function convToNewFont( str, diff ){
+	// 特殊変換文字
+	var conv0 = str;
+	if( diff.SP != null )
+		conv0 = str.replace( /[A-Za-z0-9]/g, function(c){
+			if( c in diff.SP )	// 変数c内の文字が、連想配列のkeyとして存在するか
+				return String.fromCharCode(diff.SP[c]);	// サロゲートペアではない
+			else
+				return c;
+		});
+	// 大文字変換
+	var conv1 = conv0;
+	if( diff.AZ != null )
+		conv1 = conv0.replace( /[A-Z]/g, function(c){
+			return String.fromCharCode(diff.AZ[0], c.charCodeAt(0) + diff.AZ[1]);
+		});
+	// 小文字変換
+	var conv2 = conv1;
+	if( diff.az != null )
+		conv2 = conv1.replace( /[a-z]/g, function(c){
+			return String.fromCharCode(diff.az[0], c.charCodeAt(0) + diff.az[1]);
+		});
+	// 数字変換
+	var conv3 = conv2;
+	if( diff.n09 != null )
+		conv3 = conv2.replace( /[0-9]/g, function(c){
+			return (diff.n09[0]===0) ?  
+				String.fromCharCode(c.charCodeAt(0) + diff.n09[1]) : 
+				String.fromCharCode(diff.n09[0], c.charCodeAt(0) + diff.n09[1]);
+		});
+	return conv3;
+}
